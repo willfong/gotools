@@ -17,14 +17,15 @@ type GithubKeys struct {
 
 func main() {
 	if len(os.Args) != 3 {
-		log.Fatalln("You need to specify your username and path to authorized_keys")
+		log.Fatalln("Need to specify username and path to file. \n\nUsage: sshkeys <github_username> <file_to_write_to>\nExample: ./sshkeys willfong .ssh/authorized_keys\n\n")
 	}
 
 	username := os.Args[1]
 	filepath := os.Args[2]
 	github_keys := "https://api.github.com/users/" + username + "/keys"
 
-	fmt.Println("Your username is: " + username)
+	fmt.Println("Getting keys from GitHub: " + github_keys)
+	fmt.Println("Writing to: " + filepath)
 
 	resp, err := http.Get(github_keys)
 
@@ -46,6 +47,6 @@ func main() {
 		authorized_keys = append(authorized_keys, line.Key)
 	}
 
-	authkey_file := []byte(strings.Join([]string(authorized_keys), "\n"))
+	authkey_file := []byte(strings.Join([]string(authorized_keys), "\n") + "\n")
 	ioutil.WriteFile(filepath, authkey_file, 0600)
 }
