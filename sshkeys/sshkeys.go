@@ -10,27 +10,28 @@ import (
 	"strings"
 )
 
+// Format of the JSON response from GitHub
 type GithubKeys struct {
-	Id  int
+	ID  int
 	Key string
 }
 
 func main() {
 	if len(os.Args) != 3 {
-		log.Fatalln("Need to specify username and path to file. \n\nUsage: sshkeys <github_username> <file_to_write_to>\nExample: ./sshkeys willfong .ssh/authorized_keys\n\n")
+		log.Fatalln("Need to specify username and path to file. \n\nUsage: sshkeys <github_username> <file_to_write_to>\nExample: ./sshkeys willfong .ssh/authorized_keys")
 	}
 
 	username := os.Args[1]
 	filepath := os.Args[2]
-	github_keys := "https://api.github.com/users/" + username + "/keys"
+	githubKeys := "https://api.github.com/users/" + username + "/keys"
 
-	fmt.Println("Getting keys from GitHub: " + github_keys)
+	fmt.Println("Getting keys from GitHub: " + githubKeys)
 	fmt.Println("Writing to: " + filepath)
 
-	resp, err := http.Get(github_keys)
+	resp, err := http.Get(githubKeys)
 
 	if err != nil {
-		log.Fatalln("Error downloading keys from: " + github_keys)
+		log.Fatalln("Error downloading keys from: " + githubKeys)
 	}
 
 	defer resp.Body.Close()
@@ -41,12 +42,12 @@ func main() {
 	keys := make([]GithubKeys, 0)
 	json.Unmarshal(body, &keys)
 
-	var authorized_keys []string
+	var authorizedKeys []string
 
 	for _, line := range keys {
-		authorized_keys = append(authorized_keys, line.Key)
+		authorizedKeys = append(authorizedKeys, line.Key)
 	}
 
-	authkey_file := []byte(strings.Join([]string(authorized_keys), "\n") + "\n")
-	ioutil.WriteFile(filepath, authkey_file, 0600)
+	authkeyFile := []byte(strings.Join([]string(authorizedKeys), "\n") + "\n")
+	ioutil.WriteFile(filepath, authkeyFile, 0600)
 }
