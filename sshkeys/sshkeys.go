@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-// Format of the JSON response from GitHub
+// GithubKeys - Format of the JSON response from GitHub
 type GithubKeys struct {
 	ID  int
 	Key string
